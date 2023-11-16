@@ -7,10 +7,33 @@ vCluster.Pro makes it easy to get started on EKS. If you already have an EKS Clu
 
 In this guide we will walk through the process of standing up an EKS cluster with eksctl, creating a service account and linking it to our cluster, and then installing vCluster.Pro.
 
+We will assume that you have installed eksctl.
+
 # Creating a Cluster
 
+In this example we are creating a very small cluster with eksctl. The configuration is using t2.small with 1 node and an 80gb volume. If you are just testing out creating a cluster and deploying vCluster.Pro then this is a cheap way to test it out. Be sure to delete the cluster after testing if you do not plan on using the cluster after working through this quick start guide. 
+
+``` cluster.yaml
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: vcluster-pro-demo-eks
+  region: us-west-1
+
+nodeGroups:
+  - name: vcluster-pro-eks-ng1
+    instanceType: t2.small
+    desiredCapacity: 1
+    volumeSize: 80
+    ssh:
+      allow: true
 ```
-eksctl create cluster -f cluster
+
+We can then create the cluster using eksctl.
+
+```
+eksctl create cluster -f cluster.yaml
 ```
 
 # Update KubeConfig
@@ -52,6 +75,10 @@ eksctl create addon --name aws-ebs-csi-driver --cluster vcluster-pro-demo-eks --
 ```
 
 # Create vCluster.Pro
+
+Now we are ready to install vCluster.Pro. It's as easy as `vcluster pro start` if you want to test it out. If you want to configure advanced options like specifying a domain, or other settings, then check out our configuration options.
+
+With `vcluster pro start` we will create a DNS record for you to use to access the vCluster.Pro UI. An example of one of these hostnames is below in the Login to vCluster.Pro section - "https://1rtjxak.loft.host".
 
 ```
 vcluster pro start
